@@ -152,6 +152,9 @@
           "
         >
           <span id="blubcount">0</span>x
+          <div style="font-size: 0.5em; opacity: 0.75">
+            max <span id="maxstreak">0</span>x
+          </div>
         </div>
       </div>
       <div>
@@ -181,27 +184,23 @@
       const REDIRECT_URL = 'https://minecraft.wiki/w/Dungeons_II:Blub'
       const REDIRECT_DELAY = 3000
       const PET_REDIRECT_DELAY = 2000
+      const MAX_STREAK_KEY = 'blubstreak'
 
       const blubSprite = document.getElementById('blubsprite')
       const blubCount = document.getElementById('blubcount')
+      const maxStreakEl = document.getElementById('maxstreak')
 
       let redirectTimeout
-      let countdownInterval
       let petCount = 0
+      let maxStreak = Number(localStorage.getItem(MAX_STREAK_KEY)) || 0
 
-      const plural = (count, word) =>
-        `${count} ${word}${count === 1 ? '' : 's'}`
+      maxStreakEl.textContent = maxStreak
 
       function scheduleRedirect(delay) {
         clearTimeout(redirectTimeout)
         redirectTimeout = setTimeout(() => {
           location.href = REDIRECT_URL
         }, delay)
-      }
-
-      function showCountdown(delay) {
-        clearInterval(countdownInterval)
-        let remaining = Math.ceil(delay / 1000)
       }
 
       scheduleRedirect(REDIRECT_DELAY)
@@ -214,8 +213,13 @@
         petCount += 1
         blubCount.textContent = petCount
 
+        if (petCount > maxStreak) {
+          maxStreak = petCount
+          maxStreakEl.textContent = maxStreak
+          localStorage.setItem(MAX_STREAK_KEY, maxStreak)
+        }
+
         scheduleRedirect(PET_REDIRECT_DELAY)
-        showCountdown(PET_REDIRECT_DELAY)
       })
 
       blubSprite.addEventListener('animationend', () => {
