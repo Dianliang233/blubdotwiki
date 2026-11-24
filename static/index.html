@@ -4,10 +4,6 @@
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>blub</title>
-    <meta
-      http-equiv="refresh"
-      content="3; url=https://minecraft.wiki/w/Dungeons_II:Blub"
-    />
     <script id="discord:component-embed" type="application/json">
       {
         "component": {
@@ -19,7 +15,7 @@
               "components": [
                 {
                   "type": 10,
-                  "content": "## [**Blub**](https://minecraft.wiki/w/Dungeons_II:Blub)"
+                  "content": "## [**Blub**](https://blub.wiki/)"
                 },
                 {
                   "type": 10,
@@ -65,6 +61,32 @@
       blink {
         animation: blink 500ms ease-in infinite alternate;
       }
+
+      @keyframes squish {
+        0% {
+          transform: scale(1);
+        }
+        5% {
+          transform: scale(0.84, 0.76);
+        }
+        100% {
+          transform: scale(1);
+        }
+      }
+
+      #blubsprite {
+        transform-origin: 50% 100%;
+      }
+
+      #blubsprite.squish {
+        animation: squish 440ms both;
+      }
+
+      @media (prefers-reduced-motion: reduce) {
+        #blubsprite.squish {
+          animation: none;
+        }
+      }
     </style>
   </head>
   <body
@@ -80,6 +102,8 @@
       flex-direction: column;
       justify-content: center;
       align-items: center;
+      cursor: grabbing;
+      user-select: none;
     "
   >
     <marquee
@@ -107,10 +131,15 @@
       "
     >
       <img
+        id="blubsprite"
         alt=""
         width="128"
         height="128"
-        style="image-rendering: pixelated"
+        style="
+          image-rendering: pixelated;
+          width: max(128px, 10vw);
+          height: max(128px, 10vw);
+        "
         src="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAABAAAAAQCAMAAAAoLQ9TAAAAJ1BMVEUAAACi0PJ5wfNmt+5i0PNw3/CO5vS38fp3cL1iVp6Ry/Oy1/LF3vL7XxzmAAAAAXRSTlMAQObYZgAAAFdJREFUeNqNz0EOwCAIBMCCgCL8/701pauXHjqHJdkEEq5/MqMColEFUJMKINaKVwY9InFiclt4xt6ogukUBYW68+KOq6YiY4iooTDTxewUe5beMb8evQH8CwHze/q2WAAAAABJRU5ErkJggg=="
       />
       <div>taking you shortly to the blub wiki<blink>...</blink></div>
@@ -128,5 +157,31 @@
       blub blub blub blub blub blub blub blub blub blub blub blub blub blub blub
       blub blub blub blub blub blub blub blub blub blub blub blub blub blub blub
     </marquee>
+
+    <script>
+      const REDIRECT_URL = 'https://minecraft.wiki/w/Dungeons_II:Blub'
+      const blubSprite = document.getElementById('blubsprite')
+      let redirectTimeout
+
+      function scheduleRedirect(delay) {
+        clearTimeout(redirectTimeout)
+        redirectTimeout = setTimeout(() => {
+          location.href = REDIRECT_URL
+        }, delay)
+      }
+
+      scheduleRedirect(3000)
+
+      document.body.addEventListener('mousedown', () => {
+        blubSprite.classList.remove('squish')
+        void blubSprite.offsetWidth
+        blubSprite.classList.add('squish')
+        scheduleRedirect(2000)
+      })
+
+      blubSprite.addEventListener('animationend', () => {
+        blubSprite.classList.remove('squish')
+      })
+    </script>
   </body>
 </html>
