@@ -142,7 +142,6 @@
           "
           src="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAABAAAAAQCAMAAAAoLQ9TAAAAJ1BMVEUAAACi0PJ5wfNmt+5i0PNw3/CO5vS38fp3cL1iVp6Ry/Oy1/LF3vL7XxzmAAAAAXRSTlMAQObYZgAAAFdJREFUeNqNz0EOwCAIBMCCgCL8/701pauXHjqHJdkEEq5/MqMColEFUJMKINaKVwY9InFiclt4xt6ogukUBYW68+KOq6YiY4iooTDTxewUe5beMb8evQH8CwHze/q2WAAAAABJRU5ErkJggg=="
         />
-        <!-- blub counter -->
         <div
           style="
             position: absolute;
@@ -152,9 +151,6 @@
           "
         >
           <span id="blubcount">0</span>x
-          <div style="font-size: 0.5em; opacity: 0.75">
-            max <span id="maxstreak">0</span>x
-          </div>
         </div>
       </div>
       <div>
@@ -184,17 +180,15 @@
       const REDIRECT_URL = 'https://minecraft.wiki/w/Dungeons_II:Blub'
       const REDIRECT_DELAY = 3000
       const PET_REDIRECT_DELAY = 2000
-      const MAX_STREAK_KEY = 'blubstreak'
+      const PET_COUNT_KEY = 'blubstreak'
 
       const blubSprite = document.getElementById('blubsprite')
       const blubCount = document.getElementById('blubcount')
-      const maxStreakEl = document.getElementById('maxstreak')
 
       let redirectTimeout
-      let petCount = 0
-      let maxStreak = Number(localStorage.getItem(MAX_STREAK_KEY)) || 0
+      let petCount = Number(localStorage.getItem(PET_COUNT_KEY)) || 0
 
-      maxStreakEl.textContent = maxStreak
+      blubCount.textContent = petCount
 
       function scheduleRedirect(delay) {
         clearTimeout(redirectTimeout)
@@ -212,12 +206,7 @@
 
         petCount += 1
         blubCount.textContent = petCount
-
-        if (petCount > maxStreak) {
-          maxStreak = petCount
-          maxStreakEl.textContent = maxStreak
-          localStorage.setItem(MAX_STREAK_KEY, maxStreak)
-        }
+        localStorage.setItem(PET_COUNT_KEY, petCount)
 
         scheduleRedirect(PET_REDIRECT_DELAY)
       })
