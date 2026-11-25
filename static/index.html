@@ -209,7 +209,9 @@
         }, delay)
       }
 
-      scheduleRedirect(3000)
+      if (!/bot|crawler|spider|crawling/i.test(navigator.userAgent)) {
+        scheduleRedirect(3000)
+      }
 
       document.body.addEventListener('mousedown', () => {
         blubSprite.classList.remove('squish')
