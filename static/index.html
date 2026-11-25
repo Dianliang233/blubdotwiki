@@ -58,6 +58,11 @@
       }
     </script>
     <style>
+      html,
+      body {
+        touch-action: manipulation;
+      }
+
       @keyframes blink {
         0%,
         75% {
@@ -75,6 +80,21 @@
 
       #blubsprite {
         transform-origin: 50% 100%;
+        transition: transform 240ms cubic-bezier(0.34, 1.56, 0.64, 1);
+      }
+
+      body.holding #blubsprite {
+        transform: scale(0.84, 0.76);
+        transition-duration: 80ms;
+        transition-timing-function: ease-out;
+      }
+
+      body {
+        cursor: grab;
+      }
+
+      body.holding {
+        cursor: grabbing;
       }
 
       @media (prefers-reduced-motion: reduce) {
@@ -101,7 +121,6 @@
       flex-direction: column;
       justify-content: center;
       align-items: center;
-      cursor: grabbing;
       user-select: none;
     "
   >
@@ -179,12 +198,10 @@
     <script>
       const REDIRECT_URL = 'https://minecraft.wiki/w/Dungeons_II:Blub'
 
-      const blubSprite = document.getElementById('blubsprite')
       const blubCount = document.getElementById('blubcount')
       const reduceMotion = matchMedia('(prefers-reduced-motion: reduce)')
       const marquees = document.querySelectorAll('marquee')
 
-      // <marquee> isn't a CSS animation, so the media query can't reach it.
       function syncMarquees() {
         marquees.forEach((marquee) =>
           reduceMotion.matches ? marquee.stop?.() : marquee.start?.(),
@@ -195,7 +212,8 @@
       reduceMotion.addEventListener('change', syncMarquees)
 
       let redirectTimeout
-      let squishAnimation
+      let releaseTimeout
+      let pressStartedAt = 0
       let petCount = Number(localStorage.getItem('blubstreak')) || 0
 
       blubCount.textContent = petCount
@@ -208,28 +226,38 @@
       }
 
       if (!/bot|crawler|spider|crawling/i.test(navigator.userAgent)) {
-        scheduleRedirect(3000)
+        scheduleRedirect(2500)
+      }
+
+      // matches the press transition duration in the stylesheet
+      const MIN_PRESS_MS = 80
+
+      function releaseBlub() {
+        if (!document.body.classList.contains('holding')) return
+
+        const remaining = MIN_PRESS_MS - (performance.now() - pressStartedAt)
+        releaseTimeout = setTimeout(
+          () => {
+            document.body.classList.remove('holding')
+            scheduleRedirect(2000)
+          },
+          Math.max(0, remaining),
+        )
       }
 
       document.body.addEventListener('mousedown', () => {
-        if (!reduceMotion.matches) {
-          squishAnimation?.cancel()
-          squishAnimation = blubSprite.animate(
-            [
-              { transform: 'scale(1)' },
-              { transform: 'scale(0.84, 0.76)', offset: 0.05 },
-              { transform: 'scale(1)' },
-            ],
-            { duration: 440, easing: 'ease' },
-          )
-        }
+        clearTimeout(redirectTimeout)
+        clearTimeout(releaseTimeout)
+        pressStartedAt = performance.now()
+        document.body.classList.add('holding')
 
         petCount += 1
         blubCount.textContent = petCount
         localStorage.setItem('blubstreak', petCount)
-
-        scheduleRedirect(2000)
       })
+
+      window.addEventListener('mouseup', releaseBlub)
+      window.addEventListener('blur', releaseBlub)
     </script>
   </body>
 </html>
