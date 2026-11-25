@@ -3,7 +3,22 @@
   <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+
     <title>blub</title>
+    <meta
+      name="description"
+      content="A blub is a rabbitlike ambient mob found in the Sift that can squeak and move by hopping."
+    />
+
+    <link rel="icon" type="image/png" href="/blubpics/blubby" />
+
+    <meta property="og:title" content="blub" />
+    <meta
+      property="og:description"
+      content="A blub is a rabbitlike ambient mob found in the Sift that can squeak and move by hopping."
+    />
+    <meta property="og:image" content="/blubpics/blubby" />
+
     <script id="discord:component-embed" type="application/json">
       {
         "component": {
@@ -178,15 +193,12 @@
 
     <script>
       const REDIRECT_URL = 'https://minecraft.wiki/w/Dungeons_II:Blub'
-      const REDIRECT_DELAY = 3000
-      const PET_REDIRECT_DELAY = 2000
-      const PET_COUNT_KEY = 'blubstreak'
 
       const blubSprite = document.getElementById('blubsprite')
       const blubCount = document.getElementById('blubcount')
 
       let redirectTimeout
-      let petCount = Number(localStorage.getItem(PET_COUNT_KEY)) || 0
+      let petCount = Number(localStorage.getItem('blubstreak')) || 0
 
       blubCount.textContent = petCount
 
@@ -197,7 +209,7 @@
         }, delay)
       }
 
-      scheduleRedirect(REDIRECT_DELAY)
+      scheduleRedirect(3000)
 
       document.body.addEventListener('mousedown', () => {
         blubSprite.classList.remove('squish')
@@ -206,9 +218,9 @@
 
         petCount += 1
         blubCount.textContent = petCount
-        localStorage.setItem(PET_COUNT_KEY, petCount)
+        localStorage.setItem('blubstreak', petCount)
 
-        scheduleRedirect(PET_REDIRECT_DELAY)
+        scheduleRedirect(2000)
       })
 
       blubSprite.addEventListener('animationend', () => {
