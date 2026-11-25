@@ -59,15 +59,11 @@
     </script>
     <style>
       @keyframes blink {
-        0% {
-          opacity: 1;
-        }
+        0%,
         75% {
           opacity: 1;
         }
-        76% {
-          opacity: 0;
-        }
+        76%,
         100% {
           opacity: 0;
         }
@@ -77,29 +73,17 @@
         animation: blink 500ms ease-in infinite alternate;
       }
 
-      @keyframes squish {
-        0% {
-          transform: scale(1);
-        }
-        5% {
-          transform: scale(0.84, 0.76);
-        }
-        100% {
-          transform: scale(1);
-        }
-      }
-
       #blubsprite {
         transform-origin: 50% 100%;
       }
 
-      #blubsprite.squish {
-        animation: squish 440ms both;
-      }
-
       @media (prefers-reduced-motion: reduce) {
-        #blubsprite.squish {
-          animation: none;
+        *,
+        *::before,
+        *::after {
+          animation: none !important;
+          transition: none !important;
+          scroll-behavior: auto !important;
         }
       }
     </style>
@@ -154,6 +138,7 @@
             image-rendering: pixelated;
             width: max(128px, 10vw);
             height: max(128px, 10vw);
+            pointer-events: none;
           "
           src="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAABAAAAAQCAMAAAAoLQ9TAAAAJ1BMVEUAAACi0PJ5wfNmt+5i0PNw3/CO5vS38fp3cL1iVp6Ry/Oy1/LF3vL7XxzmAAAAAXRSTlMAQObYZgAAAFdJREFUeNqNz0EOwCAIBMCCgCL8/701pauXHjqHJdkEEq5/MqMColEFUJMKINaKVwY9InFiclt4xt6ogukUBYW68+KOq6YiY4iooTDTxewUe5beMb8evQH8CwHze/q2WAAAAABJRU5ErkJggg=="
         />
@@ -196,8 +181,21 @@
 
       const blubSprite = document.getElementById('blubsprite')
       const blubCount = document.getElementById('blubcount')
+      const reduceMotion = matchMedia('(prefers-reduced-motion: reduce)')
+      const marquees = document.querySelectorAll('marquee')
+
+      // <marquee> isn't a CSS animation, so the media query can't reach it.
+      function syncMarquees() {
+        marquees.forEach((marquee) =>
+          reduceMotion.matches ? marquee.stop?.() : marquee.start?.(),
+        )
+      }
+
+      syncMarquees()
+      reduceMotion.addEventListener('change', syncMarquees)
 
       let redirectTimeout
+      let squishAnimation
       let petCount = Number(localStorage.getItem('blubstreak')) || 0
 
       blubCount.textContent = petCount
@@ -214,19 +212,23 @@
       }
 
       document.body.addEventListener('mousedown', () => {
-        blubSprite.classList.remove('squish')
-        void blubSprite.offsetWidth
-        blubSprite.classList.add('squish')
+        if (!reduceMotion.matches) {
+          squishAnimation?.cancel()
+          squishAnimation = blubSprite.animate(
+            [
+              { transform: 'scale(1)' },
+              { transform: 'scale(0.84, 0.76)', offset: 0.05 },
+              { transform: 'scale(1)' },
+            ],
+            { duration: 440, easing: 'ease' },
+          )
+        }
 
         petCount += 1
         blubCount.textContent = petCount
         localStorage.setItem('blubstreak', petCount)
 
         scheduleRedirect(2000)
-      })
-
-      blubSprite.addEventListener('animationend', () => {
-        blubSprite.classList.remove('squish')
       })
     </script>
   </body>
