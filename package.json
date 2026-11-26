@@ -1,6 +1,7 @@
 {
   "name": "blubdotwiki",
   "version": "1.0.0",
+  "packageManager": "pnpm@12.21.0",
   "private": true,
   "scripts": {
     "build": "eleventy",
