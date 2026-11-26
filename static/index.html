@@ -97,6 +97,33 @@
         cursor: grabbing;
       }
 
+      .blub-button {
+        padding: 6px 12px;
+        color: #000;
+        font: inherit;
+        font-size: max(14px, 1.5vw);
+        background: #e8f7ff;
+        border: 2px solid #000;
+        border-radius: 3px;
+        box-shadow: 3px 3px 0 #000;
+        cursor: pointer;
+        touch-action: manipulation;
+      }
+
+      .blub-button:hover {
+        background: #fff;
+      }
+
+      .blub-button:active {
+        box-shadow: 1px 1px 0 #000;
+        transform: translate(2px, 2px);
+      }
+
+      .blub-button:focus-visible {
+        outline: 3px solid #fff;
+        outline-offset: 2px;
+      }
+
       @media (prefers-reduced-motion: reduce) {
         *,
         *::before,
@@ -150,22 +177,21 @@
       <div style="position: relative">
         <img
           id="blubsprite"
-          alt=""
+          alt="a soul engorged blub"
           width="128"
           height="128"
           style="
-            image-rendering: pixelated;
             width: max(128px, 10vw);
             height: max(128px, 10vw);
             pointer-events: none;
           "
-          src="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAABAAAAAQCAMAAAAoLQ9TAAAAJ1BMVEUAAACi0PJ5wfNmt+5i0PNw3/CO5vS38fp3cL1iVp6Ry/Oy1/LF3vL7XxzmAAAAAXRSTlMAQObYZgAAAFdJREFUeNqNz0EOwCAIBMCCgCL8/701pauXHjqHJdkEEq5/MqMColEFUJMKINaKVwY9InFiclt4xt6ogukUBYW68+KOq6YiY4iooTDTxewUe5beMb8evQH8CwHze/q2WAAAAABJRU5ErkJggg=="
+          src="https://minecraft.wiki/images/thumb/MCD2_Blub_Render.png/256px-MCD2_Blub_Render.png"
         />
         <div
           style="
             position: absolute;
-            top: 0;
-            right: 0;
+            top: -10px;
+            right: -10px;
             transform: rotate(-10deg);
           "
         >
@@ -178,6 +204,27 @@
         </div>
         <div style="font-size: max(16px, 2vw)">
           or you can keep petting the blub instead
+        </div>
+        <div
+          style="
+            display: flex;
+            gap: 8px;
+            flex-wrap: wrap;
+            justify-content: center;
+            margin-top: 16px;
+          "
+        >
+          <button id="skin-button" class="blub-button" type="button">
+            skin: soul engorged
+          </button>
+          <button
+            id="sound-button"
+            class="blub-button"
+            type="button"
+            aria-pressed="true"
+          >
+            sound: on
+          </button>
         </div>
       </div>
     </div>
@@ -198,7 +245,41 @@
     <script>
       const REDIRECT_URL = 'https://minecraft.wiki/w/Dungeons_II:Blub'
 
+      const wikiThumb = (file) =>
+        `https://minecraft.wiki/images/thumb/${file}/256px-${file}`
+
+      const SKINS = [
+        {
+          name: 'soul engorged',
+          image: wikiThumb('MCD2_Blub_Render.png'),
+          sound: 'jellyBunny',
+        },
+        {
+          name: 'carapace',
+          image: wikiThumb('MCD2_Blub_Carapace_Render.png'),
+          sound: 'jellyBunnyCarapace',
+        },
+        {
+          name: 'meadows',
+          image: wikiThumb('MCD2_Blub_Meadows_Render.png'),
+          sound: 'jellyBunnyMeadow',
+        },
+        {
+          name: 'fungal',
+          image: wikiThumb('MCD2_Blub_Fungal_Render.png'),
+          sound: 'jellyBunny',
+        },
+        {
+          name: 'ravines',
+          image: wikiThumb('MCD2_Blub_Ravines_Render.png'),
+          sound: 'jellyBunnyRavine',
+        },
+      ]
+
+      const blubSprite = document.getElementById('blubsprite')
       const blubCount = document.getElementById('blubcount')
+      const skinButton = document.getElementById('skin-button')
+      const soundButton = document.getElementById('sound-button')
       const reduceMotion = matchMedia('(prefers-reduced-motion: reduce)')
       const marquees = document.querySelectorAll('marquee')
 
@@ -211,9 +292,63 @@
       syncMarquees()
       reduceMotion.addEventListener('change', syncMarquees)
 
+      const soundCache = new Map()
+      const storedSkin = Number(localStorage.getItem('blubskin'))
+      let skinIndex = SKINS[storedSkin] ? storedSkin : 0
+      let soundOn = localStorage.getItem('blubsound') !== 'off'
+
+      function getAudio(url) {
+        if (!soundCache.has(url)) {
+          const audio = new Audio(url)
+          audio.preload = 'auto'
+          soundCache.set(url, audio)
+        }
+
+        return soundCache.get(url)
+      }
+
+      function skinSounds(skin) {
+        return [1, 2, 3, 4, 5].map((n) => {
+          const file = `Mob_passive_${skin.sound}_idle_00${n}_%28SFX%29.ogg`
+          return `https://minecraft.wiki/images/transcoded/${file}/${file}.mp3`
+        })
+      }
+
+      function playSound() {
+        if (!soundOn) return
+
+        const sounds = skinSounds(SKINS[skinIndex])
+        const audio = getAudio(
+          sounds[Math.floor(Math.random() * sounds.length)],
+        )
+        audio.currentTime = 0
+        audio.play().catch(() => {})
+      }
+
+      function applySkin() {
+        const skin = SKINS[skinIndex]
+        blubSprite.src = skin.image
+        blubSprite.alt = `a ${skin.name} blub`
+        skinButton.textContent = `skin: ${skin.name}`
+        skinButton.setAttribute(
+          'aria-label',
+          `change skin (currently ${skin.name})`,
+        )
+        skinSounds(skin).forEach(getAudio)
+      }
+
+      function applySound() {
+        soundButton.textContent = `sound: ${soundOn ? 'on' : 'off'}`
+        soundButton.setAttribute('aria-pressed', String(soundOn))
+      }
+
+      applySkin()
+      applySound()
+
       let redirectTimeout
       let releaseTimeout
       let pressStartedAt = 0
+      let pressed = false
       let petCount = Number(localStorage.getItem('blubstreak')) || 0
 
       blubCount.textContent = petCount
@@ -233,8 +368,9 @@
       const MIN_PRESS_MS = 80
 
       function releaseBlub() {
-        if (!document.body.classList.contains('holding')) return
+        if (!pressed) return
 
+        pressed = false
         const remaining = MIN_PRESS_MS - (performance.now() - pressStartedAt)
         releaseTimeout = setTimeout(
           () => {
@@ -245,15 +381,40 @@
         )
       }
 
-      document.body.addEventListener('mousedown', () => {
+      document.body.addEventListener('mousedown', (event) => {
         clearTimeout(redirectTimeout)
         clearTimeout(releaseTimeout)
         pressStartedAt = performance.now()
+        pressed = true
+
+        if (event.target.closest('button, a')) return
+
         document.body.classList.add('holding')
 
         petCount += 1
         blubCount.textContent = petCount
         localStorage.setItem('blubstreak', petCount)
+
+        playSound()
+      })
+
+      skinButton.addEventListener('click', () => {
+        skinIndex = (skinIndex + 1) % SKINS.length
+        localStorage.setItem('blubskin', skinIndex)
+        applySkin()
+        playSound()
+      })
+
+      soundButton.addEventListener('click', () => {
+        soundOn = !soundOn
+        localStorage.setItem('blubsound', soundOn ? 'on' : 'off')
+
+        if (!soundOn) {
+          soundCache.forEach((audio) => audio.pause())
+        }
+
+        applySound()
+        playSound()
       })
 
       window.addEventListener('mouseup', releaseBlub)
