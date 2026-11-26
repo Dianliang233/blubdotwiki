@@ -31,8 +31,39 @@ const locales = [
     },
   },
   {
+    code: 'he',
+    label: 'עברית',
+    dir: 'rtl',
+    url: 'https://he.blub.wiki/',
+    wikiUrl: 'https://he.minecraft.wiki/w/Dungeons II:בלוב',
+    strings: {
+      blub: 'בלוב',
+      description:
+        '**בלוב** הוא יצור סביבתי "דמוי ארנבת" הנמצאה ב-הסיפט היכולים לצייץ, וזוזים על ידי קפיצות.',
+      heading: 'נעביר אותך בעוד רגע לבלוב ויקי',
+      subtitle: 'או שתמשיך ללטף את בלוב במקום',
+      skin: 'סקין',
+      sound: 'שמע',
+      on: 'מופעל',
+      off: 'כבוי ',
+      skinNames: {
+        soulEngorged: 'נשמה מלאה',
+        carapace: 'שריון',
+        meadows: 'אחו',
+        fungal: 'פטרייתי',
+        ravines: 'נקיקים',
+      },
+      alt: '{skin} בלוב',
+      changeSkin: 'שינוי סקין (כרגע {skin})',
+      discordDescription:
+        '**בלוב** הוא יצור סביבתי "דמוי ארנבת" הנמצאה ב-הסיפט היכולים לצייץ, וזוזים על ידי קפיצות.\n\n{blubChain} :blubby:',
+      discordFooter:
+        '-# מתוך :wiki: :blubby: **המיינקראפט ויקי** - [[צטרף לדיסקורד (אנגלית)](https://discord.gg/fGdE5ZE)]',
+    },
+  },
+  {
     code: 'nl',
-    label: 'Nederlands (Nederland)',
+    label: 'Nederlands',
     dir: 'ltr',
     url: 'https://nl.blub.wiki/',
     wikiUrl: 'https://nl.minecraft.wiki/w/Dungeons_II:Blubje',
