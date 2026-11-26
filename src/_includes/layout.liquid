@@ -1,23 +1,30 @@
 <!doctype html>
-<html lang="en">
+<html lang="{{ locale.code }}" dir="{{ locale.dir }}">
   <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
 
-    <title>blub</title>
+    <title>{{ locale.strings.blub | escape }}</title>
     <meta
       name="description"
-      content="A blub is a rabbitlike ambient mob found in the Sift that can squeak and move by hopping."
+      content="{{ locale.strings.description | escape }}"
     />
+
+    <link rel="canonical" href="{{ locale.url }}" />
+    {% for l in locales %}
+    <link rel="alternate" hreflang="{{ l.code }}" href="{{ l.url }}" />
+    {% endfor %}
+    <link rel="alternate" hreflang="x-default" href="{{ locales.first.url }}" />
 
     <link rel="icon" type="image/png" href="/blubpics/blubby" />
 
-    <meta property="og:title" content="blub" />
+    <meta property="og:title" content="{{ locale.strings.blub | escape }}" />
     <meta
       property="og:description"
-      content="A blub is a rabbitlike ambient mob found in the Sift that can squeak and move by hopping."
+      content="{{ locale.strings.description | escape }}"
     />
-    <meta property="og:image" content="/blubpics/blubby" />
+    <meta property="og:url" content="{{ locale.url }}" />
+    <meta property="og:image" content="{{ locale.url }}blubpics/blubby" />
 
     <script id="discord:component-embed" type="application/json">
       {
@@ -30,17 +37,17 @@
               "components": [
                 {
                   "type": 10,
-                  "content": "## [**Blub**](https://blub.wiki/)"
+                  "content": {{ locale.discordHeading | jsonify }}
                 },
                 {
                   "type": 10,
-                  "content": "A **blub** is a \"rabbitlike\" ambient mob found in the Sift that can squeak and move by hopping.\n\nblub blub blub blub blub blub blub blub blub blub blub blub blub blub blub <:blubby:1528798838465232996>"
+                  "content": {{ locale.strings.discordDescription | replace: '{blubChain}', locale.blubChain | jsonify }}
                 }
               ],
               "accessory": {
                 "type": 11,
                 "media": {
-                  "url": "https://blub.wiki/blubpics/plush"
+                  "url": "{{ locale.url }}blubpics/plush"
                 }
               }
             },
@@ -51,7 +58,7 @@
             },
             {
               "type": 10,
-              "content": "-# From the <:blubby:1155532372528349297> <:blubby:1528798838465232996> **Minecraft Wiki** - [[join wiki discord](https://discord.gg/fGdE5ZE)]"
+              "content": {{ locale.strings.discordFooter | jsonify }}
             }
           ]
         }
@@ -101,7 +108,7 @@
         padding: 6px 12px;
         color: #000;
         font: inherit;
-        font-size: max(14px, 1.5vw);
+        font-size: 14px;
         background: #e8f7ff;
         border: 2px solid #000;
         border-radius: 3px;
@@ -157,11 +164,7 @@
       scrollamount="30"
       style="font-size: 32px; color: #000"
     >
-      blub blub blub blub blub blub blub blub blub blub blub blub blub blub blub
-      blub blub blub blub blub blub blub blub blub blub blub blub blub blub blub
-      blub blub blub blub blub blub blub blub blub blub blub blub blub blub blub
-      blub blub blub blub blub blub blub blub blub blub blub blub blub blub blub
-      blub blub blub blub blub blub blub blub blub blub blub blub blub blub blub
+      {{ locale.marquee }}
     </marquee>
     <div
       style="
@@ -177,7 +180,7 @@
       <div style="position: relative">
         <img
           id="blubsprite"
-          alt="a soul engorged blub"
+          alt="{{ locale.strings.alt | replace: '{skin}', locale.strings.skinNames.soulEngorged | escape }}"
           width="128"
           height="128"
           style="
@@ -198,24 +201,36 @@
           <span id="blubcount">0</span>x
         </div>
       </div>
-      <div>
+      <div style="text-wrap: balance">
         <div style="font-size: max(32px, 5vw)">
-          taking you shortly to the blub wiki<blink>...</blink>
+          {{ locale.strings.heading }}<blink>...</blink>
         </div>
         <div style="font-size: max(16px, 2vw)">
-          or you can keep petting the blub instead
+          {{ locale.strings.subtitle }}
         </div>
+      </div>
+    </div>
+
+    <div
+      style="
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        padding-inline: 32px;
+        padding-bottom: 4px;
+        text-align: center;
+      "
+    >
         <div
           style="
             display: flex;
             gap: 8px;
             flex-wrap: wrap;
             justify-content: center;
-            margin-top: 16px;
           "
         >
           <button id="skin-button" class="blub-button" type="button">
-            skin: soul engorged
+            {{ locale.strings.skin }}: {{ locale.strings.skinNames.soulEngorged }}
           </button>
           <button
             id="sound-button"
@@ -223,10 +238,21 @@
             type="button"
             aria-pressed="true"
           >
-            sound: on
+            {{ locale.strings.sound }}: {{ locale.strings.on }}
           </button>
         </div>
-      </div>
+        <nav
+          aria-label="Language"
+          style="font-size: 12px; margin-top: 6px; opacity: 0.75"
+        >
+          {% for l in locales %}{% if l.code == locale.code %}<strong>{{ l.label }}</strong>{% else %}<a
+            href="{{ l.url }}"
+            hreflang="{{ l.code }}"
+            lang="{{ l.code }}"
+            style="color: inherit"
+            >{{ l.label }}</a
+          >{% endif %}{% unless forloop.last %} <span aria-hidden="true">·</span> {% endunless %}{% endfor %}
+        </nav>
     </div>
 
     <marquee
@@ -235,42 +261,39 @@
       scrollamount="30"
       style="font-size: 32px; color: #000"
     >
-      blub blub blub blub blub blub blub blub blub blub blub blub blub blub blub
-      blub blub blub blub blub blub blub blub blub blub blub blub blub blub blub
-      blub blub blub blub blub blub blub blub blub blub blub blub blub blub blub
-      blub blub blub blub blub blub blub blub blub blub blub blub blub blub blub
-      blub blub blub blub blub blub blub blub blub blub blub blub blub blub blub
+      {{ locale.marquee }}
     </marquee>
 
     <script>
-      const REDIRECT_URL = 'https://minecraft.wiki/w/Dungeons_II:Blub'
+      const REDIRECT_URL = '{{ locale.wikiUrl }}'
+      const STRINGS = {{ locale.strings | jsonify }}
 
       const wikiThumb = (file) =>
         `https://minecraft.wiki/images/thumb/${file}/256px-${file}`
 
       const SKINS = [
         {
-          name: 'soul engorged',
+          name: {{ locale.strings.skinNames.soulEngorged | jsonify }},
           image: wikiThumb('MCD2_Blub_Render.png'),
           sound: 'jellyBunny',
         },
         {
-          name: 'carapace',
+          name: {{ locale.strings.skinNames.carapace | jsonify }},
           image: wikiThumb('MCD2_Blub_Carapace_Render.png'),
           sound: 'jellyBunnyCarapace',
         },
         {
-          name: 'meadows',
+          name: {{ locale.strings.skinNames.meadows | jsonify }},
           image: wikiThumb('MCD2_Blub_Meadows_Render.png'),
           sound: 'jellyBunnyMeadow',
         },
         {
-          name: 'fungal',
+          name: {{ locale.strings.skinNames.fungal | jsonify }},
           image: wikiThumb('MCD2_Blub_Fungal_Render.png'),
           sound: 'jellyBunny',
         },
         {
-          name: 'ravines',
+          name: {{ locale.strings.skinNames.ravines | jsonify }},
           image: wikiThumb('MCD2_Blub_Ravines_Render.png'),
           sound: 'jellyBunnyRavine',
         },
@@ -328,17 +351,19 @@
       function applySkin() {
         const skin = SKINS[skinIndex]
         blubSprite.src = skin.image
-        blubSprite.alt = `a ${skin.name} blub`
-        skinButton.textContent = `skin: ${skin.name}`
+        blubSprite.alt = STRINGS.alt.replace('{skin}', skin.name)
+        skinButton.textContent = `${STRINGS.skin}: ${skin.name}`
         skinButton.setAttribute(
           'aria-label',
-          `change skin (currently ${skin.name})`,
+          STRINGS.changeSkin.replace('{skin}', skin.name),
         )
         skinSounds(skin).forEach(getAudio)
       }
 
       function applySound() {
-        soundButton.textContent = `sound: ${soundOn ? 'on' : 'off'}`
+        soundButton.textContent = `${STRINGS.sound}: ${
+          soundOn ? STRINGS.on : STRINGS.off
+        }`
         soundButton.setAttribute('aria-pressed', String(soundOn))
       }
 
