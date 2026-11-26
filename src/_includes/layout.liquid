@@ -131,6 +131,38 @@
         outline-offset: 2px;
       }
 
+      .marquee {
+        width: 100%;
+        overflow: hidden;
+        color: #000;
+        font-size: 32px;
+        white-space: nowrap;
+      }
+
+      .marquee-track {
+        display: flex;
+        width: max-content;
+        animation: marquee-scroll 40s linear infinite;
+      }
+
+      .marquee--right .marquee-track {
+        animation-direction: reverse;
+      }
+
+      .marquee-track span {
+        display: block;
+        padding-right: 0.5em;
+      }
+
+      @keyframes marquee-scroll {
+        from {
+          transform: translateX(0);
+        }
+        to {
+          transform: translateX(-50%);
+        }
+      }
+
       @media (prefers-reduced-motion: reduce) {
         *,
         *::before,
@@ -158,14 +190,12 @@
       user-select: none;
     "
   >
-    <marquee
-      behavior="scroll"
-      direction="left"
-      scrollamount="30"
-      style="font-size: 32px; color: #000"
-    >
-      {{ locale.marquee }}
-    </marquee>
+    <div class="marquee" aria-hidden="true">
+      <div class="marquee-track">
+        <span>{{ locale.marquee }}</span>
+        <span>{{ locale.marquee }}</span>
+      </div>
+    </div>
     <div
       style="
         display: flex;
@@ -255,14 +285,12 @@
         </nav>
     </div>
 
-    <marquee
-      behavior="scroll"
-      direction="right"
-      scrollamount="30"
-      style="font-size: 32px; color: #000"
-    >
-      {{ locale.marquee }}
-    </marquee>
+    <div class="marquee marquee--right" aria-hidden="true">
+      <div class="marquee-track">
+        <span>{{ locale.marquee }}</span>
+        <span>{{ locale.marquee }}</span>
+      </div>
+    </div>
 
     <script>
       const REDIRECT_URL = '{{ locale.wikiUrl }}'
@@ -304,16 +332,6 @@
       const skinButton = document.getElementById('skin-button')
       const soundButton = document.getElementById('sound-button')
       const reduceMotion = matchMedia('(prefers-reduced-motion: reduce)')
-      const marquees = document.querySelectorAll('marquee')
-
-      function syncMarquees() {
-        marquees.forEach((marquee) =>
-          reduceMotion.matches ? marquee.stop?.() : marquee.start?.(),
-        )
-      }
-
-      syncMarquees()
-      reduceMotion.addEventListener('change', syncMarquees)
 
       const soundCache = new Map()
       const storedSkin = Number(localStorage.getItem('blubskin'))
@@ -374,9 +392,37 @@
       let releaseTimeout
       let pressStartedAt = 0
       let pressed = false
-      let petCount = Number(localStorage.getItem('blubstreak')) || 0
+
+      function readPetCount() {
+        const cookie = document.cookie.match(
+          new RegExp(`(?:^|;\\s*)blubstreak=(\\d+)`),
+        )
+
+        return cookie ? Number(cookie[1]) : 0
+      }
+
+      function writePetCount(count) {
+        document.cookie = `blubstreak=${count}; path=/; max-age=63158400; samesite=lax`
+      }
+
+      let petCount = readPetCount()
+
+      // migrate from localStorage
+      if (localStorage.getItem('blubstreak')) {
+        petCount += Number(localStorage.getItem('blubstreak'))
+        writePetCount(petCount)
+        localStorage.removeItem('blubstreak')
+      }
 
       blubCount.textContent = petCount
+
+      window.addEventListener('focus', () => {
+        const shared = readPetCount()
+        if (shared !== petCount) {
+          petCount = shared
+          blubCount.textContent = petCount
+        }
+      })
 
       function scheduleRedirect(delay) {
         clearTimeout(redirectTimeout)
@@ -389,14 +435,11 @@
         scheduleRedirect(2500)
       }
 
-      // matches the press transition duration in the stylesheet
-      const MIN_PRESS_MS = 80
-
       function releaseBlub() {
         if (!pressed) return
 
         pressed = false
-        const remaining = MIN_PRESS_MS - (performance.now() - pressStartedAt)
+        const remaining = 80 - (performance.now() - pressStartedAt)
         releaseTimeout = setTimeout(
           () => {
             document.body.classList.remove('holding')
@@ -418,7 +461,7 @@
 
         petCount += 1
         blubCount.textContent = petCount
-        localStorage.setItem('blubstreak', petCount)
+        writePetCount(petCount)
 
         playSound()
       })

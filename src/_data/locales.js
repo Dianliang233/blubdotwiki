@@ -129,7 +129,7 @@ for (const locale of locales) {
   const { blub } = locale.strings
 
   locale.blubChain = Array.from({ length: 15 }, () => blub).join(' ')
-  locale.marquee = Array.from({ length: 75 }, () => blub).join(' ')
+  locale.marquee = Array.from({ length: 120 }, () => blub).join(' ')
   locale.discordHeading = `## [**${blub.charAt(0).toUpperCase()}${blub.slice(1)}**](${locale.url})`
 }
 
