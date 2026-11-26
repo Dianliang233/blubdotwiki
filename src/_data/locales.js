@@ -34,7 +34,7 @@ const locales = [
     code: 'nl',
     label: 'Nederlands (Nederland)',
     dir: 'ltr',
-    url: 'https://blub.wiki/',
+    url: 'https://nl.blub.wiki/',
     wikiUrl: 'https://nl.minecraft.wiki/w/Dungeons_II:Blubje',
     strings: {
       blub: 'blubje',
