@@ -402,7 +402,7 @@
       }
 
       function writePetCount(count) {
-        document.cookie = `blubstreak=${count}; path=/; max-age=63158400; samesite=lax`
+        document.cookie = `blubstreak=${count}; path=/; domain=.blub.wiki; max-age=63158400; samesite=lax`
       }
 
       let petCount = readPetCount()
