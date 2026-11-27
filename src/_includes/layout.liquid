@@ -81,7 +81,7 @@
         }
       }
 
-      blink {
+      .blink {
         animation: blink 500ms ease-in infinite alternate;
       }
 
@@ -232,8 +232,8 @@
         </div>
       </div>
       <div style="text-wrap: balance">
-        <div style="font-size: max(32px, 5vw)">
-          {{ locale.strings.heading }}<blink>...</blink>
+        <div style="font-size: max(32px, 4vw)">
+          {{ locale.strings.heading }}<div class="blink">...</div>
         </div>
         <div style="font-size: max(16px, 2vw)">
           {{ locale.strings.subtitle }}
