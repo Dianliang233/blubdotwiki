@@ -393,16 +393,43 @@
       let pressStartedAt = 0
       let pressed = false
 
+      function isProd() {
+        return (
+          location.hostname === 'blub.wiki' ||
+          location.hostname.endsWith('.blub.wiki')
+        )
+      }
+
+      if (document.cookie.includes('blubstreak=')) {
+        // read the host only and the shared cookie, add them together, and write the shared cookie
+        const cookies = document.cookie.match(
+          /(?:^|;\s*)blubstreak=(\d+)/g,
+        )
+        if (cookies) {
+          const total = cookies.reduce(
+            (sum, cookie) => sum + Number(cookie.split('=')[1]),
+            0,
+          )
+          writePetCount(total)
+        }
+
+        if (isProd()) {
+          document.cookie = "blubstreak=; path=/; expires=Thu, 01 Jan 1970 00:00:01 GMT";
+        }
+      }
+
       function readPetCount() {
         const cookie = document.cookie.match(
-          new RegExp(`(?:^|;\\s*)blubstreak=(\\d+)`),
+          /(?:^|;\s*)blubstreak=(\d+)/,
         )
 
         return cookie ? Number(cookie[1]) : 0
       }
 
       function writePetCount(count) {
-        document.cookie = `blubstreak=${count}; path=/; domain=.blub.wiki; max-age=63158400; samesite=lax`
+        const domain = isProd() ? '; domain=.blub.wiki' : ''
+        const secure = location.protocol === 'https:' ? '; secure' : ''
+        document.cookie = `blubstreak=${count}; path=/; max-age=63158400; samesite=lax${domain}${secure}`
       }
 
       let petCount = readPetCount()
