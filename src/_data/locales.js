@@ -31,6 +31,68 @@ const locales = [
     },
   },
   {
+    code: 'es',
+    label: 'Español',
+    dir: 'ltr',
+    url: 'https://es.blub.wiki/',
+    wikiUrl: 'https://es.minecraft.wiki/w/Dungeons_II:Blub',
+    strings: {
+      blub: 'blub',
+      description:
+        'El blub es una criatura ambiental generada en el Sift. Se define como un conejo luminiscente suave y blando, que puede saltar y chillar.',
+      heading: 'te llevaremos en un momento a la wiki del blub',
+      subtitle: 'o, si lo prefieres, puedes seguir acariciando al blub',
+      skin: 'aspecto',
+      sound: 'sonido',
+      on: 'sí',
+      off: 'no',
+      skinNames: {
+        soulEngorged: 'hinchado de almas',
+        carapace: 'caparazón',
+        meadows: 'prado',
+        fungal: 'fúngico',
+        ravines: 'barranco',
+      },
+      alt: 'un blub {skin}',
+      changeSkin: 'alterar el aspecto (ahora {skin})',
+      discordDescription:
+        'El **blub** es una criatura ambiental generada en el Sift. Se define como un conejo luminiscente suave y blando, que puede saltar y chillar.\n\n{blubChain} <:blubby:1528798838465232996>',
+      discordFooter:
+        '-# De <:blubby:1155532372528349297> <:blubby:1528798838465232996> **Minecraft Wiki Español** - [[únete al servidor de Discord del wiki](https://discord.gg/FSycykEqBC)]',
+    },
+  },
+  {
+    code: 'fr',
+    label: 'Français',
+    dir: 'ltr',
+    url: 'https://fr.blub.wiki/',
+    wikiUrl: 'https://fr.minecraft.wiki/w/Dungeons_II:Blub',
+    strings: {
+      blub: 'blub',
+      description:
+        'Un blub est une créature ambiante ressemblant à un lapin qui vit dans le Sift. Il peut émettre des couinements et se déplacer en sautillant.',
+      heading: 'vous redirigera bientôt vers le blub wiki',
+      subtitle: 'ou alors tu peux continuer à caresser le blub à la place',
+      skin: 'skin',
+      sound: 'son',
+      on: 'activé',
+      off: 'désactivé',
+      skinNames: {
+        soulEngorged: "gorgé d'âme",
+        carapace: 'carapace',
+        meadows: 'des prairies',
+        fungal: 'fongique',
+        ravines: 'des ravins',
+      },
+      alt: 'un blub {skin}',
+      changeSkin: 'changer de skin (actuellement blub {skin})',
+      discordDescription:
+        'Un **blub** est une créature ambiante ressemblant à un lapin qui vit dans le Sift. Il peut émettre des couinements et se déplacer en sautillant.\n\n{blubChain} <:blubby:1528798838465232996>',
+      discordFooter:
+        '-# Pour le <:blubby:1155532372528349297> <:blubby:1528798838465232996> **Minecraft Wiki francophone** - [[Rejoindre le discord du wiki](https://discord.gg/PSK48k7)]',
+    },
+  },
+  {
     code: 'he',
     label: 'עברית',
     dir: 'rtl',
